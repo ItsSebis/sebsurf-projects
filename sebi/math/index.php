@@ -44,11 +44,4 @@ $plot->SetTitle('Angaben in Milliarden');
 $plot->SetPlotAreaWorld(NULL, 0, NULL, NULL);
 
 $plot->DrawGraph();
-?>
 
-<html lang="de">
-<head>
-    <title>Mathe Würfel</title>
-    <meta charset="utf-8">
-</head>
-</html>
