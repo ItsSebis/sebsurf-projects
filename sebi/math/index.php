@@ -67,7 +67,7 @@ $plot->SetLegend(array("A", "B"));
 $plot->SetTitle('Angaben in Milliarden');
 
 # Make sure Y axis starts at 0:
-$plot->SetPlotAreaWorld(NULL, 0, NULL, 100);
+$plot->SetPlotAreaWorld(NULL, 0, NULL, NULL);
 
 $plot->DrawGraph();
 
