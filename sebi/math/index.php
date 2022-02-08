@@ -1,4 +1,14 @@
 <?php
+
+if (!isset($_GET["graph"])) {
+    header("location: ./?graph=percent");
+    exit();
+} elseif ($_GET["graph"] == "percent") {
+    $graph = "%";
+} else {
+    $graph = "$";
+}
+
 # PHPlot Example: Simple line graph
 require_once '../.config/dbh.php';
 require_once '../extensions/functions.php';
@@ -10,22 +20,38 @@ $awin = array();
 $bwin = array();
 
 foreach (throws() as $doneData) {
-    $done[] = $doneData["done"]/1000000000;
-    $awin[] = $doneData["awin"]/1000000000;
-    $bwin[] = $doneData["bwin"]/1000000000;
+    $doneNumber = $doneData["done"]/1000000000;
+    $aWinNumber = $doneData["awin"]/1000000000;
+    $bWinNumber = $doneData["bwin"]/1000000000;
+    if ($doneNumber !== 0) {
+        $aWinPercent = 100/$doneNumber*$aWinNumber;
+        $bWinPercent = 100/$doneNumber*$bWinNumber;
+    } else {
+        $aWinPercent = 0;
+        $bWinPercent = 0;
+    }
+    if ($graph == "%") {
+        $done[] = $doneNumber;
+        $awin[] = $aWinPercent;
+        $bwin[] = $bWinPercent;
+    } else {
+        $done[] = $doneNumber;
+        $awin[] = $aWinNumber;
+        $bwin[] = $bWinNumber;
+    }
 }
 //$doneArray = throwsDone();
 //echo($doneArray);
 
 $data = array();
 
-for ($i = count($done); $i > 0; $i--) {
+for ($i = count($done)-1; $i >= 0; $i--) {
     $data[] = array('', $done[$i], $awin[$i], $bwin[$i]);
 }
 
-$plot = new PHPlot(1920, 1000, "out/out.png");
-$plot->SetImageBorderType('plain');
+$plot = new PHPlot(1920, 1000);
 
+$plot->SetLineWidths(1);
 $plot->SetTextColor("white");
 $plot->SetTitleColor("white");
 $plot->SetPlotType('lines');
@@ -41,7 +67,7 @@ $plot->SetLegend(array("A", "B"));
 $plot->SetTitle('Angaben in Milliarden');
 
 # Make sure Y axis starts at 0:
-$plot->SetPlotAreaWorld(NULL, 0, NULL, NULL);
+$plot->SetPlotAreaWorld(NULL, 0, NULL, 100);
 
 $plot->DrawGraph();
 
